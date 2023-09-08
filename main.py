@@ -4,6 +4,7 @@ from collections import OrderedDict
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
 
+# This is a comment
 
 def input_sorter():
     clipBoard = klembord.get_with_rich_text()[1]
