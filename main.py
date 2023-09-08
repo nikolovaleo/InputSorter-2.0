@@ -4,7 +4,6 @@ from collections import OrderedDict
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
 
-# This is a comment
 
 def input_sorter():
     clipBoard = klembord.get_with_rich_text()[1]
@@ -54,6 +53,18 @@ def input_sorter():
 def compare_command():
     pass
 
+#The following variable is where we get the user's input from.
+stringClipboard = klembord.get_with_rich_text()[0]
+
+pal = "string"
 
 if __name__ == "__main__":
-    input_sorter()
+    
+    if pal == "string":
+        compare_command()
+        print(stringClipboard)
+    else: 
+        input_sorter() 
+
+
+
