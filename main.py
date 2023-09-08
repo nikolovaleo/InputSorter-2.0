@@ -48,3 +48,11 @@ def input_sorter():
     content["HTML Format"] = klembord.wrap_html(inverse_string)
     test1 = klembord.set(content)
     # """
+
+
+def compare_command():
+    pass
+
+
+if __name__ == "__main__":
+    input_sorter()
