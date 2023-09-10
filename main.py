@@ -1,9 +1,11 @@
 import klembord
+import docx
 from collections import OrderedDict
+from docx import Document
 
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
-
+document = Document()
 
 def input_sorter():
     clipBoard = klembord.get_with_rich_text()[1]
@@ -50,21 +52,56 @@ def input_sorter():
     # """
 
 
-def compare_command():
-    pass
-
 #The following variable is where we get the user's input from.
-stringClipboard = klembord.get_with_rich_text()[0]
+stringClipboardShortcut = klembord.get_with_rich_text()[0]
+stringClipboardShortcutSplit = stringClipboardShortcut.split(" ")
+#Extracts the first word on the string saved in the clipboard
+Shortcut = stringClipboardShortcutSplit[0]
+extractedWordContent = ""
+docxRootshortcutsPath = "Shortcuts.docx"
+docxRootShortcuts = Document(docxRootshortcutsPath)
 
-pal = "string"
+
+def compare_command():
+    print(stringClipboardShortcutSplit)
+    print(docxRootShortcuts)
+    # Initialize an empty string to store the extracted content
+    extracted_content = ""
+
+    # Iterate through paragraphs in the document and append them to the extracted_content
+    for paragraph in docxRootShortcuts.paragraphs:
+        extracted_content += paragraph.text 
+        #print(extracted_content)
+
+
+    shortcutList = extracted_content.split("~")
+    print(shortcutList)
+
+    # Set the clipboard content to the extracted content
+    klembord.init()
+    klembord.set_text(extracted_content)
+
+
+    # Remove even items using list comprehension
+    filteredShortcutList = []
+    
+    for i in range(len(shortcutList)):
+        if i % 2 != 0: 
+            filteredShortcutList.append(shortcutList[i])
+
+    #Lista con los shortcuts:
+    print(filteredShortcutList)
+
 
 if __name__ == "__main__":
-    
-    if pal == "string":
+    Shortcutest = "No" # Chance this variable to any other string so the code continue working as usual
+    if Shortcutest == "No":
         compare_command()
-        print(stringClipboard)
+        
     else: 
         input_sorter() 
+
+#No Jaime,
 
 
 
