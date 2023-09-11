@@ -4,6 +4,7 @@ from collections import OrderedDict
 from docx import Document
 import csv
 import os
+import win32com.client
 
 
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
@@ -82,6 +83,30 @@ def compare_command():
             docx_files.append(docx_files_ext)
     print("The following .docx files are present on the data folder: ")
     print(docx_files)
+    
+
+    # Replace 'your_document.docx' with the path to your .docx file
+    docx_path = 'c:/Users/E1430967/Documents/GitHub/InputSorter-2.0/Data/initial.docx'
+    
+    # Initialize a COM object for Microsoft Word
+    word = win32com.client.Dispatch("Word.Application")
+
+    # Open the .docx file
+    doc = word.Documents.Open(docx_path)
+
+    # Select the entire document
+    doc.Content.WholeStory
+
+    # Copy the selected content to the clipboard
+    doc.Content.Copy()
+
+    # Close the document without saving changes
+    doc.Close(False)
+
+    # Quit Microsoft Word
+    word.Quit()
+
+    print("Content copied to clipboard using pywin32.")
     
 
 
