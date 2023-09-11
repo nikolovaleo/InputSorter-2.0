@@ -2,6 +2,9 @@ import klembord
 import docx
 from collections import OrderedDict
 from docx import Document
+import csv
+import os
+
 
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
@@ -52,56 +55,51 @@ def input_sorter():
     # """
 
 
-#The following variable is where we get the user's input from.
-stringClipboardShortcut = klembord.get_with_rich_text()[0]
-stringClipboardShortcutSplit = stringClipboardShortcut.split(" ")
-#Extracts the first word on the string saved in the clipboard
-Shortcut = stringClipboardShortcutSplit[0]
-extractedWordContent = ""
-docxRootshortcutsPath = "Shortcuts.docx"
-docxRootShortcuts = Document(docxRootshortcutsPath)
 
+def compare_command():  
 
-def compare_command():
-    print(stringClipboardShortcutSplit)
-    print(docxRootShortcuts)
-    # Initialize an empty string to store the extracted content
-    extracted_content = ""
-
-    # Iterate through paragraphs in the document and append them to the extracted_content
-    for paragraph in docxRootShortcuts.paragraphs:
-        extracted_content += paragraph.text 
-        #print(extracted_content)
-
-
-    shortcutList = extracted_content.split("~")
+    # CSV shortcuts list
+    csv_file_path = 'shortcuts.csv'
+    # Open and read the CSV file
+    with open(csv_file_path, newline='') as csvfile:
+        shortcutListRaw = list(csv.reader(csvfile))
+        shortcutList = [item[0] for item in shortcutListRaw]
+    print("The following shortcuts are present of the CSV file: ")
     print(shortcutList)
+    match_shortcut = []
+    for item in shortcutList:
+        if item in stringClipboardShortcutSplit:
+            match_shortcut.append(item)
+            print("There is a match! The " + match_shortcut[0] + " shortcut has been detected on the CSV file")
 
-    # Set the clipboard content to the extracted content
-    klembord.init()
-    klembord.set_text(extracted_content)
 
-
-    # Remove even items using list comprehension
-    filteredShortcutList = []
+    # .docx files name list
+    folder_path = 'c:/Users/E1430967/Documents/GitHub/InputSorter-2.0/Data'
+    # Initialize an empty list to store the file names
+    docx_files = []
+    # List all files in the folder
+    files = os.listdir(folder_path)
+    # Iterate through the files and filter .docx files
+    for file in files:
+        if file.endswith(".docx"):
+            docx_files_ext = os.path.splitext(file)[0]
+            docx_files.append(docx_files_ext)
+    print("The following .docx files are present on the data folder: ")
+    print(docx_files)
     
-    for i in range(len(shortcutList)):
-        if i % 2 != 0: 
-            filteredShortcutList.append(shortcutList[i])
-
-    #Lista con los shortcuts:
-    print(filteredShortcutList)
 
 
 if __name__ == "__main__":
-    Shortcutest = "No" # Chance this variable to any other string so the code continue working as usual
-    if Shortcutest == "No":
+    #Input shortcut
+    stringClipboardShortcut = klembord.get_with_rich_text()[0]
+    stringClipboardShortcutSplit = stringClipboardShortcut.split(" ")
+    Shortcut = "".join(stringClipboardShortcutSplit)
+    ShortcutSize = len(Shortcut)
+
+    if ShortcutSize < 15:
         compare_command()
-        
     else: 
         input_sorter() 
 
-#No Jaime,
 
-
-
+#sru shortcut
