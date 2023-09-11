@@ -60,7 +60,6 @@ def compare_command():
 
     # CSV shortcuts list
     csv_file_path = 'shortcuts.csv'
-    # Open and read the CSV file
     with open(csv_file_path, newline='') as csvfile:
         shortcutListRaw = list(csv.reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
@@ -68,18 +67,15 @@ def compare_command():
     print(shortcutList)
     match_shortcut = []
     for item in shortcutList:
-        if item in stringClipboardShortcutSplit:
+        if item in ShortcutFinal:
             match_shortcut.append(item)
             print("There is a match! The " + match_shortcut[0] + " shortcut has been detected on the CSV file")
 
 
     # .docx files name list
     folder_path = 'c:/Users/E1430967/Documents/GitHub/InputSorter-2.0/Data'
-    # Initialize an empty list to store the file names
     docx_files = []
-    # List all files in the folder
     files = os.listdir(folder_path)
-    # Iterate through the files and filter .docx files
     for file in files:
         if file.endswith(".docx"):
             docx_files_ext = os.path.splitext(file)[0]
@@ -93,9 +89,11 @@ if __name__ == "__main__":
     #Input shortcut
     stringClipboardShortcut = klembord.get_with_rich_text()[0]
     stringClipboardShortcutSplit = stringClipboardShortcut.split(" ")
+    #print(stringClipboardShortcutSplit)
     Shortcut = "".join(stringClipboardShortcutSplit)
     ShortcutSize = len(Shortcut)
-
+    ShortcutFinal = Shortcut.split("\x00")[0]
+    print(ShortcutFinal)
     if ShortcutSize < 15:
         compare_command()
     else: 
