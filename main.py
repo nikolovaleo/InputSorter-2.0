@@ -1,7 +1,5 @@
 import klembord
-import docx
 from collections import OrderedDict
-from docx import Document
 import csv
 import os
 import win32com.client
@@ -9,7 +7,6 @@ import win32com.client
 
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
-document = Document()
 
 def input_sorter():
     clipBoard = klembord.get_with_rich_text()[1]
@@ -54,8 +51,6 @@ def input_sorter():
     content["HTML Format"] = klembord.wrap_html(inverse_string)
     test1 = klembord.set(content)
     # """
-
-
 
 def compare_command():  
 
@@ -113,7 +108,6 @@ def compare_command():
         # Quit Microsoft Word
         word.Quit()
         print("Content copied to clipboard using pywin32.")
-
 
 
 if __name__ == "__main__":
