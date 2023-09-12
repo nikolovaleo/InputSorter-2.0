@@ -28,4 +28,3 @@ dependencies:
   - zlib=1.2.13=h8cc25b3_0
   - pip:
     - klembord==0.3.0
-prefix: C:\Users\e1426744\Miniconda3\envs\input_sorter
