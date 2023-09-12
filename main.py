@@ -8,6 +8,7 @@ import win32com.client
 # test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
 
+
 def input_sorter():
     clipBoard = klembord.get_with_rich_text()[1]
     just_html_string = clipBoard.split("<!--StartFragment-->")[-1] + ">"  # or <body>
@@ -52,11 +53,11 @@ def input_sorter():
     test1 = klembord.set(content)
     # """
 
-def compare_command():  
 
+def compare_command():
     # CSV shortcuts list
-    csv_file_path = 'shortcuts.csv'
-    with open(csv_file_path, newline='') as csvfile:
+    csv_file_path = "shortcuts.csv"
+    with open(csv_file_path, newline="") as csvfile:
         shortcutListRaw = list(csv.reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
     print("The following shortcuts are present of the CSV file: ")
@@ -67,11 +68,14 @@ def compare_command():
         if item in ShortcutFinal:
             match_shortcut_csv.append(item)
             match_shortcut_conditional_csv = True
-            print("There is a match! The " + match_shortcut_csv[0] + " shortcut has been detected on the CSV file")
-
+            print(
+                "There is a match! The "
+                + match_shortcut_csv[0]
+                + " shortcut has been detected on the CSV file"
+            )
 
     # .docx files name list
-    folder_path = 'c:/Users/E1430967/Documents/GitHub/InputSorter-2.0/Data'
+    folder_path = "./Data/"
     docx_files = []
     files = os.listdir(folder_path)
     for file in files:
@@ -80,7 +84,6 @@ def compare_command():
             docx_files.append(docx_files_ext)
     print("The following .docx files are present on the data folder: ")
     print(docx_files)
-    
 
     match_shortcut_docx = []
     match_shortcut_conditional_docx = False
@@ -89,12 +92,15 @@ def compare_command():
             print(i)
             match_shortcut_docx.append(i)
             match_shortcut_conditional_docx = True
-            print("There is a match! The " + match_shortcut_docx[0] + " shortcut has been detected on the data folder")
-
+            print(
+                "There is a match! The "
+                + match_shortcut_docx[0]
+                + " shortcut has been detected on the data folder"
+            )
 
     if match_shortcut_conditional_csv and match_shortcut_conditional_docx:
         # Replace 'your_document.docx' with the path to your .docx file
-        docx_path = "c:/Users/E1430967/Documents/GitHub/InputSorter-2.0/Data/" + ShortcutFinal + ".docx"
+        docx_path = os.path.abspath(f"./Data/{ShortcutFinal}.docx")
         # Initialize a COM object for Microsoft Word
         word = win32com.client.Dispatch("Word.Application")
         # Open the .docx file
@@ -111,21 +117,21 @@ def compare_command():
 
 
 if __name__ == "__main__":
-    #Input shortcut
+    # Input shortcut
     stringClipboardShortcut = klembord.get_with_rich_text()[0]
     stringClipboardShortcutSplit = stringClipboardShortcut.split(" ")
-    #print(stringClipboardShortcutSplit)
+    # print(stringClipboardShortcutSplit)
     Shortcut = "".join(stringClipboardShortcutSplit)
     ShortcutSize = len(Shortcut)
     ShortcutFinal = Shortcut.split("\x00")[0]
     print(ShortcutFinal)
     if ShortcutSize < 15:
         compare_command()
-    else: 
-        input_sorter() 
+    else:
+        input_sorter()
 
 
-#sru shortcut
+# sru shortcut
 
-#sdfds
-#initial
+# sdfds
+# initial
