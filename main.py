@@ -54,26 +54,64 @@ def input_sorter():
     # """
 
 
-def compare_command():
+def levenshtein_distance(s1, s2):
+    """
+    Compute the Levenshtein distance between two strings.
+    """
+    if len(s1) > len(s2):
+        s1, s2 = s2, s1
+
+    distances = range(len(s1) + 1)
+    for i2, c2 in enumerate(s2):
+        distances_ = [i2 + 1]
+        for i1, c1 in enumerate(s1):
+            if c1.lower() == c2.lower():
+                distances_.append(distances[i1])
+            else:
+                distances_.append(
+                    1 + min((distances[i1], distances[i1 + 1], distances_[-1]))
+                )
+        distances = distances_
+    return distances[-1]
+
+
+def string_similarity(s1, strings_list, threshold=90):
+    """
+    Compute the similarity between s1 and each string in strings_list.
+    Return True/False based on similarity criteria and the string with the highest similarity.
+    """
+    max_similarity = 0
+    most_similar_string = None
+
+    for s in strings_list:
+        # Calculate the Levenshtein distance
+        distance = levenshtein_distance(s1, s)
+        # Calculate similarity percentage
+        similarity = (1 - distance / max(len(s1), len(s))) * 100
+        # Update max_similarity and most_similar_string
+        if similarity > max_similarity:
+            max_similarity = similarity
+            most_similar_string = s
+
+    return max_similarity >= threshold, most_similar_string
+
+
+# Test
+
+
+def compare_command(input_user):
     # CSV shortcuts list
-    csv_file_path = "shortcuts.csv"
+    csv_file_path = "./Data/shortcuts.csv"
     with open(csv_file_path, newline="") as csvfile:
         shortcutListRaw = list(csv.reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
-    print("The following shortcuts are present of the CSV file: ")
-    print(shortcutList)
-    match_shortcut_csv = []
-    match_shortcut_conditional_csv = False
-    for item in shortcutList:
-        if item in ShortcutFinal:
-            match_shortcut_csv.append(item)
-            match_shortcut_conditional_csv = True
-            print(
-                "There is a match! The "
-                + match_shortcut_csv[0]
-                + " shortcut has been detected on the CSV file"
-            )
+    print(f"The following shortcuts are present of the CSV file: {shortcutList}")
 
+    match_shortcut_conditional_csv, match_shortcut_csv = string_similarity(
+        input_user, shortcutList, 80
+    )
+
+    # initial
     # .docx files name list
     folder_path = "./Data/"
     docx_files = []
@@ -85,22 +123,23 @@ def compare_command():
     print("The following .docx files are present on the data folder: ")
     print(docx_files)
 
-    match_shortcut_docx = []
     match_shortcut_conditional_docx = False
-    for i in docx_files:
-        if i in ShortcutFinal:
-            print(i)
-            match_shortcut_docx.append(i)
+
+    for docx in docx_files:
+        if (docx in match_shortcut_csv) and (
+            match_shortcut_conditional_csv
+        ):  # falta validar este input tambien
+            print(docx)
+            match_shortcut_docx = docx
             match_shortcut_conditional_docx = True
             print(
-                "There is a match! The "
-                + match_shortcut_docx[0]
-                + " shortcut has been detected on the data folder"
+                f"There is a match! The {match_shortcut_docx}.docx file has been detected on the data folder"
             )
+            break
 
     if match_shortcut_conditional_csv and match_shortcut_conditional_docx:
         # Replace 'your_document.docx' with the path to your .docx file
-        docx_path = os.path.abspath(f"./Data/{ShortcutFinal}.docx")
+        docx_path = os.path.abspath(f"./Data/{match_shortcut_docx}.docx")
         # Initialize a COM object for Microsoft Word
         word = win32com.client.Dispatch("Word.Application")
         # Open the .docx file
@@ -112,7 +151,7 @@ def compare_command():
         # Close the document without saving changes
         doc.Close(False)
         # Quit Microsoft Word
-        word.Quit()
+        # word.Quit()
         print("Content copied to clipboard using pywin32.")
 
 
@@ -123,15 +162,14 @@ if __name__ == "__main__":
     # print(stringClipboardShortcutSplit)
     Shortcut = "".join(stringClipboardShortcutSplit)
     ShortcutSize = len(Shortcut)
-    ShortcutFinal = Shortcut.split("\x00")[0]
-    print(ShortcutFinal)
+    input_user = Shortcut.split("\x00")[0]
+    print(input_user)
     if ShortcutSize < 15:
-        compare_command()
+        compare_command(input_user)
     else:
         input_sorter()
 
 
 # sru shortcut
-
 # sdfds
 # initial
