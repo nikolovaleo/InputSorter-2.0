@@ -105,11 +105,16 @@ def compare_command(input_user):
     with open(csv_file_path, newline="") as csvfile:
         shortcutListRaw = list(csv.reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
-    print(f"The following shortcuts are present of the CSV file: {shortcutList}")
+    print("The following shortcuts are present of the CSV file: ")
+    print(shortcutList)
+    match_shortcut_csv = []
+    match_shortcut_conditional_csv = False
+    for item in shortcutList:
+        if item in ShortcutFinal:
+            match_shortcut_csv.append(item)
+            match_shortcut_conditional_csv = True
+            print("There is a match! The " + match_shortcut_csv[0] + " shortcut has been detected on the CSV file")
 
-    match_shortcut_conditional_csv, match_shortcut_csv = string_similarity(
-        input_user, shortcutList, 80
-    )
 
     # .docx files name list
     folder_path = "./Data/"
@@ -169,7 +174,7 @@ if __name__ == "__main__":
         input_sorter()
 
 
-# sru shortcut
-# sdfds
-# initial
-#sur
+#sru shortcut
+
+#sdfds
+#initial
