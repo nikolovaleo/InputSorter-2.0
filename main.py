@@ -4,8 +4,6 @@ import csv
 import os
 import win32com.client
 
-
-# test= klembord.set_with_rich_text('plain text', '<b>plain text</b>')
 klembord.init()
 
 
@@ -53,7 +51,6 @@ def input_sorter():
     test1 = klembord.set(content)
     # """
 
-
 def levenshtein_distance(s1, s2):
     """
     Compute the Levenshtein distance between two strings.
@@ -73,7 +70,6 @@ def levenshtein_distance(s1, s2):
                 )
         distances = distances_
     return distances[-1]
-
 
 def string_similarity(s1, strings_list, threshold=90):
     """
@@ -95,24 +91,16 @@ def string_similarity(s1, strings_list, threshold=90):
 
     return max_similarity >= threshold, most_similar_string
 
-
-# Test
-
-
 def compare_command(input_user):
-    # CSV shortcuts list
+
     csv_file_path = "./Data/shortcuts.csv"
     with open(csv_file_path, newline="") as csvfile:
         shortcutListRaw = list(csv.reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
-    print(f"The following shortcuts are present of the CSV file: {shortcutList}")
-
     match_shortcut_conditional_csv, match_shortcut_csv = string_similarity(
-        input_user, shortcutList, 80
+        input_user, shortcutList, 60
     )
 
-    # initial
-    # .docx files name list
     folder_path = "./Data/"
     docx_files = []
     files = os.listdir(folder_path)
@@ -120,56 +108,41 @@ def compare_command(input_user):
         if file.endswith(".docx"):
             docx_files_ext = os.path.splitext(file)[0]
             docx_files.append(docx_files_ext)
-    print("The following .docx files are present on the data folder: ")
-    print(docx_files)
 
     match_shortcut_conditional_docx = False
 
     for docx in docx_files:
         if (docx in match_shortcut_csv) and (
             match_shortcut_conditional_csv
-        ):  # falta validar este input tambien
-            print(docx)
+        ):  
             match_shortcut_docx = docx
             match_shortcut_conditional_docx = True
-            print(
-                f"There is a match! The {match_shortcut_docx}.docx file has been detected on the data folder"
-            )
             break
 
     if match_shortcut_conditional_csv and match_shortcut_conditional_docx:
-        # Replace 'your_document.docx' with the path to your .docx file
         docx_path = os.path.abspath(f"./Data/{match_shortcut_docx}.docx")
-        # Initialize a COM object for Microsoft Word
         word = win32com.client.Dispatch("Word.Application")
-        # Open the .docx file
         doc = word.Documents.Open(docx_path)
-        # Select the entire document
         doc.Content.WholeStory
-        # Copy the selected content to the clipboard
         doc.Content.Copy()
-        # Close the document without saving changes
         doc.Close(False)
-        # Quit Microsoft Word
-        # word.Quit()
         print("Content copied to clipboard using pywin32.")
+    else:
+        docx_path = os.path.abspath(f"./Data/noShortcutFound.docx")
+        word = win32com.client.Dispatch("Word.Application")
+        doc = word.Documents.Open(docx_path)
+        doc.Content.WholeStory
+        doc.Content.Copy()
+        doc.Close(False)
 
 
 if __name__ == "__main__":
-    # Input shortcut
     stringClipboardShortcut = klembord.get_with_rich_text()[0]
     stringClipboardShortcutSplit = stringClipboardShortcut.split(" ")
-    # print(stringClipboardShortcutSplit)
     Shortcut = "".join(stringClipboardShortcutSplit)
     ShortcutSize = len(Shortcut)
     input_user = Shortcut.split("\x00")[0]
-    print(input_user)
     if ShortcutSize < 15:
         compare_command(input_user)
     else:
         input_sorter()
-
-
-# sru shortcut
-# sdfds
-# initial
