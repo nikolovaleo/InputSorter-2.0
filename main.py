@@ -1,8 +1,8 @@
 import klembord
 from collections import OrderedDict
-import csv
-import os
-import win32com.client
+from csv import reader
+from  os import listdir, path
+from win32com.client import Dispatch
 
 klembord.init()
 
@@ -95,7 +95,7 @@ def compare_command(input_user):
 
     csv_file_path = "./Data/shortcuts.csv"
     with open(csv_file_path, newline="") as csvfile:
-        shortcutListRaw = list(csv.reader(csvfile))
+        shortcutListRaw = list(reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
     match_shortcut_conditional_csv, match_shortcut_csv = string_similarity(
         input_user, shortcutList, 60
@@ -103,10 +103,10 @@ def compare_command(input_user):
 
     folder_path = "./Data/"
     docx_files = []
-    files = os.listdir(folder_path)
+    files = listdir(folder_path)
     for file in files:
         if file.endswith(".docx"):
-            docx_files_ext = os.path.splitext(file)[0]
+            docx_files_ext = path.splitext(file)[0]
             docx_files.append(docx_files_ext)
 
     match_shortcut_conditional_docx = False
@@ -120,16 +120,16 @@ def compare_command(input_user):
             break
 
     if match_shortcut_conditional_csv and match_shortcut_conditional_docx:
-        docx_path = os.path.abspath(f"./Data/{match_shortcut_docx}.docx")
-        word = win32com.client.Dispatch("Word.Application")
+        docx_path = path.abspath(f"./Data/{match_shortcut_docx}.docx")
+        word = Dispatch("Word.Application")
         doc = word.Documents.Open(docx_path)
         doc.Content.WholeStory
         doc.Content.Copy()
         doc.Close(False)
         print("Content copied to clipboard using pywin32.")
     else:
-        docx_path = os.path.abspath(f"./Data/noShortcutFound.docx")
-        word = win32com.client.Dispatch("Word.Application")
+        docx_path = path.abspath(f"./Data/noShortcutFound.docx")
+        word = Dispatch("Word.Application")
         doc = word.Documents.Open(docx_path)
         doc.Content.WholeStory
         doc.Content.Copy()
