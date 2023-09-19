@@ -101,6 +101,13 @@ def compare_command(input_user):
         input_user, shortcutList, 60
     )
 
+    match_shortcut_csv = []
+    match_shortcut_conditional_csv = False
+    for item in shortcutList:
+        if item in input_user:
+            match_shortcut_csv.append(item)
+            match_shortcut_conditional_csv = True
+            
     folder_path = "./Data/"
     docx_files = []
     files = listdir(folder_path)
@@ -112,9 +119,7 @@ def compare_command(input_user):
     match_shortcut_conditional_docx = False
 
     for docx in docx_files:
-        if (docx in match_shortcut_csv) and (
-            match_shortcut_conditional_csv
-        ):  
+        if (docx in match_shortcut_csv):
             match_shortcut_docx = docx
             match_shortcut_conditional_docx = True
             break
