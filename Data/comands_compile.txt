@@ -1,0 +1,3 @@
+pyinstaller --onefile main.py
+
+pyinstaller --icon=.\data\switch.ico --onefile main.py
