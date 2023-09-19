@@ -1,6 +1,6 @@
 import klembord
 from collections import OrderedDict
-from csv import reader
+from csv import reader, writer
 from  os import listdir, path
 from win32com.client import Dispatch
 
@@ -71,7 +71,7 @@ def levenshtein_distance(s1, s2):
         distances = distances_
     return distances[-1]
 
-def string_similarity(s1, strings_list, threshold=90):
+def string_similarity(s1, strings_list, threshold=100):
     """
     Compute the similarity between s1 and each string in strings_list.
     Return True/False based on similarity criteria and the string with the highest similarity.
@@ -92,19 +92,14 @@ def string_similarity(s1, strings_list, threshold=90):
     return max_similarity >= threshold, most_similar_string
 
 def compare_command(input_user):
-
     csv_file_path = "./Data/shortcuts.csv"
     with open(csv_file_path, newline="") as csvfile:
         shortcutListRaw = list(reader(csvfile))
         shortcutList = [item[0] for item in shortcutListRaw]
-    match_shortcut_conditional_csv, match_shortcut_csv = string_similarity(
-        input_user, shortcutList, 60
-    )
-
     match_shortcut_csv = []
     match_shortcut_conditional_csv = False
-    for item in shortcutList:
-        if item in input_user:
+    for item in shortcutList: 
+        if item in input_user and len(item) == len(input_user):
             match_shortcut_csv.append(item)
             match_shortcut_conditional_csv = True
             
@@ -116,30 +111,39 @@ def compare_command(input_user):
             docx_files_ext = path.splitext(file)[0]
             docx_files.append(docx_files_ext)
 
+    match_shortcut_docx = []
     match_shortcut_conditional_docx = False
-
-    for docx in docx_files:
-        if (docx in match_shortcut_csv):
-            match_shortcut_docx = docx
+    for i in docx_files:
+        if (i in input_user and len(i) == len(input_user)):
+            print(i)
+            match_shortcut_docx.append(i)
             match_shortcut_conditional_docx = True
-            break
 
-    if match_shortcut_conditional_csv and match_shortcut_conditional_docx:
-        docx_path = path.abspath(f"./Data/{match_shortcut_docx}.docx")
+    if  match_shortcut_conditional_csv and match_shortcut_conditional_docx:
+        docx_path = path.abspath(f"./Data/{input_user}.docx")
         word = Dispatch("Word.Application")
         doc = word.Documents.Open(docx_path)
         doc.Content.WholeStory
         doc.Content.Copy()
         doc.Close(False)
-        print("Content copied to clipboard using pywin32.")
     else:
-        docx_path = path.abspath(f"./Data/noShortcutFound.docx")
-        word = Dispatch("Word.Application")
-        doc = word.Documents.Open(docx_path)
-        doc.Content.WholeStory
-        doc.Content.Copy()
-        doc.Close(False)
-
+        for looking_for_error_file in docx_files:
+            if looking_for_error_file == "noShortcutFound":
+                docx_path = path.abspath(f"./Data/noShortcutFound.docx")
+                word = Dispatch("Word.Application")
+                doc = word.Documents.Open(docx_path)
+                doc.Content.Text = "No shortcut was found on the shortcuts.csv file or on the Data folder(.docx). List of available shortcuts on .csv file:  \n"
+                # Read and insert data from the CSV file into the document line by line
+                with open(csv_file_path, newline='') as csvfile:
+                    csv_reader = reader(csvfile)
+                    for row in csv_reader:
+                        line_text = ', '.join(row) # Convert the CSV row to a string
+                        doc.Content.InsertAfter(line_text + '\n') # Insert the line and add a newline
+                doc.Save()
+                doc.Content.WholeStory
+                doc.Content.Copy()
+                doc.Close(False)
+                print("Content copied to clipboard using pywin32.")
 
 if __name__ == "__main__":
     stringClipboardShortcut = klembord.get_with_rich_text()[0]
@@ -148,6 +152,6 @@ if __name__ == "__main__":
     ShortcutSize = len(Shortcut)
     input_user = Shortcut.split("\x00")[0]
     if ShortcutSize < 15:
-        compare_command(input_user)
+        compare_command(input_user)  
     else:
         input_sorter()
